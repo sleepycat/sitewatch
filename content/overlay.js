@@ -39,7 +39,6 @@
  var password = 'pwd';
  var server_url = '';
  var username = 'sleepycat';
-var teststring = 'localhost:3000/users/test';
 
 var  logit = function(msg) {
   var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
@@ -92,7 +91,6 @@ var sitestalker = {
   
   onMenuItemCommand: function(e) {
 
-  alert(teststring);
     //var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                                   //.getService(Components.interfaces.nsIPromptService);
 //    promptService.alert(window, this.strings.getString("helloMessageTitle"),

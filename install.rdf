@@ -2,7 +2,9 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <RDF:Description RDF:about="rdf:#$a885C2"
+  <RDF:Description RDF:about="urn:mozilla:extension:file:"
+                   em:package="content/" />
+  <RDF:Description RDF:about="rdf:#$ck9lZ3"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="1.5"
                    em:maxVersion="4.*.*" />
@@ -11,8 +13,10 @@
                    em:name="sitestalker"
                    em:version="0.1"
                    em:creator="Mike Williamson"
+                   em:description="Watches parts of websites for changes."
                    em:homepageURL="http://www.dexterchief.com"
                    em:iconURL="chrome://sitestalker/content/sitestalker.png">
-    <em:targetApplication RDF:resource="rdf:#$a885C2"/>
+    <em:targetApplication RDF:resource="rdf:#$ck9lZ3"/>
+    <em:file RDF:resource="urn:mozilla:extension:file:"/>
   </RDF:Description>
 </RDF:RDF>

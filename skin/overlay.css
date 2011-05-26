@@ -5,18 +5,18 @@
 }
 #sitestalker-toolbar-button
 {
-  list-style-image: url("chrome://sitestalker/content/sitestalker.png");
-  -moz-image-region: rect(0px 24px 24px 0px);
+  list-style-image: url("chrome://sitestalker/content/eye.png");
+  -moz-image-region: rect(40px 40px 40px 40px);
 }
 #sitestalker-toolbar-button:hover
 {
-  -moz-image-region: rect(24px 24px 48px  0px);
+  -moz-image-region: rect(40px 40px 40px 40px);
 }
 [iconsize="small"] #sitestalker-toolbar-button
 {
-  -moz-image-region: rect( 0px 40px 16px 24px);
+  -moz-image-region: rect(40px 40px 40px 40px);
 }
 [iconsize="small"] #sitestalker-toolbar-button:hover
 {
-  -moz-image-region: rect(24px 40px 40px 24px);
+  -moz-image-region: rect(40px 40px 40px 40px);
 }

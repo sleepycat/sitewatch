@@ -40,10 +40,10 @@
 <overlay id="sitestalker-overlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<script type="application/x-javascript" src="chrome://sitestalker/content/jquery-1.4.min.js" />
+<script type="application/x-javascript" src="chrome://sitestalker/content/jquery-1.6.1.min.js" />
 
 <script type="application/x-javascript" src="chrome://sitestalker/content/jquery.highlighter.js" />
-  <script src="overlay.js"/>
+  <script type="application/x-javascript" src="overlay.js"/>
   <stringbundleset id="stringbundleset">
     <stringbundle id="sitestalker-strings" src="chrome://sitestalker/locale/sitestalker.properties"/>
   </stringbundleset>
