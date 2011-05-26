@@ -1,0 +1,22 @@
+/* This is just an example.  You shouldn't do this. */
+#sitestalker-hello
+{
+  color: red ! important;
+}
+#sitestalker-toolbar-button
+{
+  list-style-image: url("chrome://sitestalker/content/eyes.jpg");
+  -moz-image-region: rect(0px 24px 24px 0px);
+}
+#sitestalker-toolbar-button:hover
+{
+  -moz-image-region: rect(24px 24px 48px  0px);
+}
+[iconsize="small"] #sitestalker-toolbar-button
+{
+  -moz-image-region: rect( 0px 40px 16px 24px);
+}
+[iconsize="small"] #sitestalker-toolbar-button:hover
+{
+  -moz-image-region: rect(24px 40px 40px 24px);
+}
