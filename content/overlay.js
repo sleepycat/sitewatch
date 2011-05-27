@@ -33,138 +33,126 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * 
  * ***** END LICENSE BLOCK ***** */
- var url_to_track = 'url_to_track';
- var xpath_to_element = 'xpath_to_element';
- var username = 'uname';
- var password = 'pwd';
- var server_url = '';
- var username = 'sleepycat';
-
-var  logit = function(msg) {
-  var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-                                 .getService(Components.interfaces.nsIConsoleService);
-  consoleService.logStringMessage(msg);
-  }
-
-var getXPathForElement = function(el, xml) {
-	var xpath = '';
-	var pos, tempitem2;
-	
-	while(el !== xml.documentElement) {		
-		pos = 0;
-		tempitem2 = el;
-		while(tempitem2) {
-			if (tempitem2.nodeType === 1 && tempitem2.nodeName === el.nodeName) { // If it is ELEMENT_NODE of the same name
-				pos += 1;
-			}
-			tempitem2 = tempitem2.previousSibling;
-		}
-		
-		xpath = "*[name()='"+el.nodeName+"' and namespace-uri()='"+(el.namespaceURI===null?'':el.namespaceURI)+"']["+pos+']'+'/'+xpath;
-
-		el = el.parentNode;
-	}
-	xpath = '/*'+"[name()='"+xml.documentElement.nodeName+"' and namespace-uri()='"+(el.namespaceURI===null?'':el.namespaceURI)+"']"+'/'+xpath;
-	xpath = xpath.replace(/\/$/, '');
-	return xpath;
-  }
 
 
-var sitestalker = {
-  
-  //doc : window.content,document,
 
+
+
+var sitestalker = { 
+  url_to_track: 'url_to_track',
+  xpath_to_element: 'xpath_to_element',
+  password: 'pwd',
+  username: 'sleepycat',
+  server_url: "http://sitestalker.heroku.com/",
+  activated: false,
+  getElementXPath: function(element){
+    if (element && element.id)
+        return '//*[@id="' + element.id + '"]';
+    else
+        return this.getElementTreeXPath(element);
+  },
+  getElementTreeXPath: function(element){
+    var paths = [];
+
+    // Use nodeName (instead of localName) so namespace prefix is included (if any).
+    for (; element && element.nodeType == 1; element = element.parentNode)
+    {
+        var index = 0;
+        for (var sibling = element.previousSibling; sibling; sibling = sibling.previousSibling)
+        {
+            // Ignore document type declaration.
+            if (sibling.nodeType == Node.DOCUMENT_TYPE_NODE)
+                continue;
+
+            if (sibling.nodeName == element.nodeName)
+                ++index;
+        }
+
+        var tagName = element.nodeName.toLowerCase();
+        var pathIndex = (index ? "[" + (index+1) + "]" : "");
+        paths.splice(0, 0, tagName + pathIndex);
+    }
+
+    return paths.length ? "/" + paths.join("/") : null;
+  },
   onLoad: function() {
     // initialization code
   
-	logit('onload fired');
+	this.logit('onload fired');
   
     this.initialized = true;
     this.strings = document.getElementById("sitestalker-strings");
   },
 
-  username: "sleepycat",
-
-  server_url: "http://localhost:3000/",
-
-  activated: false,
   
   onMenuItemCommand: function(e) {
-
-    //var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                                  //.getService(Components.interfaces.nsIPromptService);
-//    promptService.alert(window, this.strings.getString("helloMessageTitle"),
-   //                             this.strings.getString("helloMessage"));
-  //$(this).toggle(function(){this.activated = true}, function(){this.activated = false});
-  if(this.activated == false){
-    this.activated = true;
- 
-    logit("this.activated set to true");
-  }
-  else{
-    this.activated = false;
-    logit("this.activated set to false");
+    that = this;
     
-  }  
+    //replace this rediculousness with $.toggle
+    if(this.activated == false){
+      this.activated = true;
+      this.logit("this.activated set to true");
+    }
+    else{
+      this.activated = false;
+      this.logit("this.activated set to false");
+    }  
 
-   var doc = window.content.document;
-if(this.activated == true){
+    var doc = window.content.document;
+    if(this.activated == true){
+      //TODO make another attempt to use jquery.live here.
+      $(doc.documentElement).bind('click.sitewatch', function(event){
+  
+      //This will fire so this when elements are clicked:
+      //  alert(getElementXPath(event.target).toString());
+  
+      //TODO take a look at why this ajax call doesn't seem to be doing anything. 
+      //Just a bad url? 
+      $.ajax({
+        url: "http://sitestalker.heroku.com/pages/create/", 
+        type: "POST",
+        data: { url: doc.location, xpath: that.getElementXPath(event.target).toLowerCase() },
+        success: function(){alert('We stored it.')}
+      });
+  
+  
+      event.stopPropagation();
+      //return false here in case they clicked a link or button.
+      return false;
+      });
+  
+      //using the new namespaced events from jQuery 1.4 W00T!
+      $('*', doc).bind('mouseenter.sitewatch', function(event){
+      //     var b = $(event.target).css("border");
+      //     var m = $(event.target).css("MozBorderRadius");
+      //     $(event.target).data("border", b );
+      //     $(event.target).data("MozBorderRadius", m);      
 
-    
-//I can't get to my server_url from inside the function below. 
-  $(doc.documentElement).bind('click.sitewatch', function(event){
-   
-  //Time to see if I can get the jhighlight working.  
-  $(event.target).attr("title", event.target.nodeName).addClass(".jhighlight");
-   $(event.target).jhighlight();
-    $(event.target).trigger('click');
-    
+        $(event.target).css('border', 'solid 3px');
+        $(event.target).css('MozBorderRadius', '20px');
+      //  this.logit(url_to_track);
+      //  this.logit(xpath_to_element);
+      //  this.logit(username);
+      //  this.logit(password);
+      // 	this.logit(getXPathForElement(event.target, doc));
+      });
 
-  $.ajax({
-  url: "http://localhost:3000/users/sleepycat/watches", 
- type: "POST",
-  data: { url: doc.location, xpath: getXPathForElement(event.target, doc).toLowerCase() },
-  success: function(){alert('We stored it.')}
-  });
-  event.stopPropagation();
-  //return false here in case they clicked a link or button.
-  return false;
-});
+      $(doc.documentElement).bind('mouseout.sitewatch', function(event){
+      //This is stripping off the border from the search box:
+      //http://start.ubuntu.com/9.10/
 
-//using the new namespaced events from jQuery 1.4 W00T!
-  $('*', doc).bind('mouseenter.sitewatch', function(event){
- //     var b = $(event.target).css("border");
- //     var m = $(event.target).css("MozBorderRadius");
- //     $(event.target).data("border", b );
- //     $(event.target).data("MozBorderRadius", m);      
-
-      $(event.target).css('border', 'solid 3px');
-          $(event.target).css('MozBorderRadius', '20px');
- //    logit(url_to_track);
- //   logit(xpath_to_element);
- //     logit(username);
- //     logit(password);
- //	  	logit(getXPathForElement(event.target, doc));
-	  });
-
-$(doc.documentElement).bind('mouseout.sitewatch', function(event){
-//This is stripping off the border from the search box:
-//http://start.ubuntu.com/9.10/
-
-//Pulling stuff from the jquery data api is a little slow... Updates to the page 
-//var b = $(event.target).data("border");
-//  var m = $(event.target).data("MozBorderRadius");
-//    $(event.target).css("border", b);
-//      $(event.target).css("MozBorderRadius", m);
-          $(event.target).css('-moz-border-radius', '');
-          $(event.target).css('border', '');
-    });
-	}
-else{
-
-  $('*', doc).unbind('.sitewatch');
-
-}
+      //Pulling stuff from the jquery data api is a little slow... Updates to the page 
+      //var b = $(event.target).data("border");
+      //  var m = $(event.target).data("MozBorderRadius");
+      //    $(event.target).css("border", b);
+      //      $(event.target).css("MozBorderRadius", m);
+        $(event.target).css('-moz-border-radius', '');
+	$(event.target).css('border', '');
+      });
+    }
+    else{
+      $('*', doc).unbind('.sitewatch');
+    }
 
 
   },
@@ -173,8 +161,12 @@ else{
     sitestalker.onMenuItemCommand(e);
 	
 
+  },
+  logit: function(msg) {
+  var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
+                                 .getService(Components.interfaces.nsIConsoleService);
+  consoleService.logStringMessage(msg);
   }
-
-
 };
+
 window.addEventListener("load", function(e) { sitestalker.onLoad(e); }, false);
