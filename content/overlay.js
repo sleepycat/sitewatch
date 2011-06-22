@@ -119,25 +119,83 @@ var sitewatch = {
     var doc = window.content.document.documentElement;
     if(that.activated){
 
-      $(doc).bind('click.sitewatch', function(event){
+      $('*:not(.sitewatch)',doc).bind('click.sitewatch', function(event){
         event.stopPropagation();
         that.sendToServer(event.target);
         //return false here in case they clicked a link or button.
         return false;
       });
   
-      $('*', doc).bind('mouseenter.sitewatch', function(event){
-        $(event.target).css('border', 'solid 3px');
-        $(event.target).css('MozBorderRadius', '20px');
+      $('*:not(.sitewatch)', doc).bind('mouseenter.sitewatch', function(event){ 
+        var padding = 3;
+        var border = 7;
+        var element = $(event.target);
+        var offset = element.offset();
+        var element_top = offset.top;
+        var element_bottom = offset.top + element.outerHeight();
+        var element_left = offset.left;
+        var element_right = offset.left + element.outerWidth();
+        $('#top',doc).css({
+          'top': element_top - padding
+          ,'width': element.outerWidth() + (border * 2) + (padding * 2)
+          ,'left':element_left - padding - border
+          ,'z-index': 1000 
+          });
+        $('#bottom',doc).css({
+          'top': element_bottom + padding
+          ,'width': element.outerWidth() + (border * 2) + (padding * 2)
+          ,'left': element_left - padding - border
+          ,'z-index': 1000
+          }).html('<p>Click to keep an eye on this portion of the page.</p>');
+        $('#right',doc).css({
+            'top': element_top - padding
+            ,'height': element.outerHeight() + (padding * 2)
+            ,'left': element_right + padding
+            ,'z-index': 999
+            });
+        $('#left',doc).css({
+            'top': element_top + padding
+            ,'height': element.outerHeight() + (padding * 2)
+            ,'left': element_left - padding - border
+            ,'z-index': 999
+            });
+        $('.sitewatch',doc).show();
       });
+      $('body', doc).prepend(
+          '<div class="sitewatch" id="top"></div>'
+          ,'<div class="sitewatch" id="bottom"></div>'
+          ,'<div class="sitewatch" id="left"></div>'
+          ,'<div class="sitewatch" id="right"></div>'
+          );
+      $('.sitewatch', doc).css({'position':'absolute'}).hide();
+      $('#right', doc).css({
+          'border-right': '7px solid #00f'
+          , 'border-top-right-radius': '10px'
+          });
+      $('#left', doc).css({
+          'border-left': '7px solid #00f'
+          });
+      $('#top', doc).css({
+          'border-top': '7px solid #00f'
+          ,'border-top-left-radius': '10px'
+          ,'border-top-right-radius': '10px'
+          });
+      $('#bottom',doc).css({
+          'border-bottom':'7px solid #00f'
+          ,'border-bottom-left-radius': '10px'
+          ,'border-bottom-right-radius': '10px'
+          ,'background-color': '#00f'
+        });
+      $('#bottom',doc).first().css({
+          'font-family':'sans-serif'
+          ,'font-size': '10px'
+          ,'color': '#fff'
+        });
 
-      $(doc).bind('mouseout.sitewatch', function(event){
-        $(event.target).css('-moz-border-radius', '');
-	$(event.target).css('border', '');
-      });
     }
     else{
       $('*', window.content.document).unbind('.sitewatch');
+      $('.sitewatch', window.content.document).remove();
     }
 
 
