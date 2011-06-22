@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is sitestalker.
+ * The Original Code is sitewatch.
  *
  * The Initial Developer of the Original Code is
  * Mike Williamson.
@@ -38,12 +38,12 @@
 
 
 
-var sitestalker = { 
+var sitewatch = { 
   url_to_track: 'url_to_track',
   xpath_to_element: 'xpath_to_element',
   password: 'pwd',
   username: 'sleepycat',
-  server_url: "http://sitestalker.heroku.com/",
+  server_url: "http://sitewatch.heroku.com/",
   activated: false,
   getElementXPath: function(element){
     if (element && element.id)
@@ -77,90 +77,84 @@ var sitestalker = {
   },
   onLoad: function() {
     // initialization code
-  
-	this.logit('onload fired');
-  
-    this.initialized = true;
-    this.strings = document.getElementById("sitestalker-strings");
+    that = this;
+    that.logit('onload fired');
   },
-
-  
+  sendToServer: function(element){
+    that = this;
+    var content = $(element).html();
+    var hash = hex_sha1(content); 
+    that.logit(that.getElementXPath(element).toString());
+    $.ajax({
+      url: "http://sitewatch.heroku.com/watches",
+      //url: "http://localhost:3000/watches",
+      username: "mike",
+      password: "password",
+      type: "POST",
+      data: {'url': window.content.document.URL, 'sha1_hash': hash, 'xpath': that.getElementXPath(element).toLowerCase() },
+      success: function(data, textStatus, jqXHR){ that.logit("response was: " + textStatus)},
+      statusCode:{
+        404:function(){that.logit("404 not found!")},
+        400:function(){that.logit("400 bad request!")},
+        500:function(){that.logit("500 server borked!")},
+        401:function(){that.logit("401 unauthorized.")},
+        403:function(){that.logit("403 forbidden.")}
+      }
+    });
+  },  
   onMenuItemCommand: function(e) {
     that = this;
     
-    //replace this rediculousness with $.toggle
-    if(this.activated == false){
-      this.activated = true;
-      this.logit("this.activated set to true");
+    that.logit("button was: " + e.button);
+
+    if(that.activated){
+      that.activated = false;
+      that.logit("this.activated set to false");
     }
     else{
-      this.activated = false;
-      this.logit("this.activated set to false");
+      that.activated = true;
+      that.logit("this.activated set to true");
     }  
 
-    var doc = window.content.document;
-    if(this.activated == true){
-      //TODO make another attempt to use jquery.live here.
-      $(doc.documentElement).bind('click.sitewatch', function(event){
-  
-      //This will fire so this when elements are clicked:
-      //  alert(getElementXPath(event.target).toString());
-  
-      //TODO take a look at why this ajax call doesn't seem to be doing anything. 
-      //Just a bad url? 
-      $.ajax({
-        url: "http://sitestalker.heroku.com/pages/create/", 
-        type: "POST",
-        data: { url: doc.location, xpath: that.getElementXPath(event.target).toLowerCase() },
-        success: function(){alert('We stored it.')}
-      });
-  
-  
-      event.stopPropagation();
-      //return false here in case they clicked a link or button.
-      return false;
-      });
-  
-      //using the new namespaced events from jQuery 1.4 W00T!
-      $('*', doc).bind('mouseenter.sitewatch', function(event){
-      //     var b = $(event.target).css("border");
-      //     var m = $(event.target).css("MozBorderRadius");
-      //     $(event.target).data("border", b );
-      //     $(event.target).data("MozBorderRadius", m);      
+    var doc = window.content.document.documentElement;
+    if(that.activated){
 
+      $(doc).bind('click.sitewatch', function(event){
+        event.stopPropagation();
+        that.sendToServer(event.target);
+        //return false here in case they clicked a link or button.
+        return false;
+      });
+  
+      $('*', doc).bind('mouseenter.sitewatch', function(event){
         $(event.target).css('border', 'solid 3px');
         $(event.target).css('MozBorderRadius', '20px');
-      //  this.logit(url_to_track);
-      //  this.logit(xpath_to_element);
-      //  this.logit(username);
-      //  this.logit(password);
-      // 	this.logit(getXPathForElement(event.target, doc));
       });
 
-      $(doc.documentElement).bind('mouseout.sitewatch', function(event){
-      //This is stripping off the border from the search box:
-      //http://start.ubuntu.com/9.10/
-
-      //Pulling stuff from the jquery data api is a little slow... Updates to the page 
-      //var b = $(event.target).data("border");
-      //  var m = $(event.target).data("MozBorderRadius");
-      //    $(event.target).css("border", b);
-      //      $(event.target).css("MozBorderRadius", m);
+      $(doc).bind('mouseout.sitewatch', function(event){
         $(event.target).css('-moz-border-radius', '');
 	$(event.target).css('border', '');
       });
     }
     else{
-      $('*', doc).unbind('.sitewatch');
+      $('*', window.content.document).unbind('.sitewatch');
     }
 
 
   },
+  optionsLoad: function() {
+    var pref = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sitewatch.");
+          window.document.getElementById("username").value = pref.getCharPref("startUrl");
+            window.document.getElementById("password").value = pref.getCharPref("endUrl");
+  },
+  optionsSave: function() {
+    var pref = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sitewatch.");
+    pref.setCharPref("username", window.document.getElementById("startUrl").value);
+    pref.setCharPref("password", window.document.getElementById("endUrl").value);
+    window.close();
+  },
   onToolbarButtonCommand: function(e) {
-    // just reuse the function above.  you can change this, obviously!
-    sitestalker.onMenuItemCommand(e);
-	
-
+    sitewatch.onMenuItemCommand(e);
   },
   logit: function(msg) {
   var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
@@ -169,4 +163,4 @@ var sitestalker = {
   }
 };
 
-window.addEventListener("load", function(e) { sitestalker.onLoad(e); }, false);
+window.addEventListener("load", function(e) { sitewatch.onLoad(e); }, false);

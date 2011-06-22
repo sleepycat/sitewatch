@@ -1,22 +1,21 @@
-/* This is just an example.  You shouldn't do this. */
-#sitestalker-hello
+#sitewatch-hello
 {
   color: red ! important;
 }
-#sitestalker-toolbar-button
+#sitewatch-toolbar-button
 {
-  list-style-image: url("chrome://sitestalker/content/eye.png");
+  list-style-image: url("chrome://sitewatch/content/eye.png");
   -moz-image-region: rect(40px 40px 40px 40px);
 }
-#sitestalker-toolbar-button:hover
-{
-  -moz-image-region: rect(40px 40px 40px 40px);
-}
-[iconsize="small"] #sitestalker-toolbar-button
+#sitewatch-toolbar-button:hover
 {
   -moz-image-region: rect(40px 40px 40px 40px);
 }
-[iconsize="small"] #sitestalker-toolbar-button:hover
+[iconsize="small"] #sitewatch-toolbar-button
+{
+  -moz-image-region: rect(40px 40px 40px 40px);
+}
+[iconsize="small"] #sitewatch-toolbar-button:hover
 {
   -moz-image-region: rect(40px 40px 40px 40px);
 }

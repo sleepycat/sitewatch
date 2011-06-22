@@ -12,7 +12,7 @@
   - for the specific language governing rights and limitations under the
   - License.
   -
-  - The Original Code is sitestalker.
+  - The Original Code is sitewatch.
   -
   - The Initial Developer of the Original Code is
   - Mike Williamson.
@@ -35,28 +35,26 @@
   - 
   - ***** END LICENSE BLOCK ***** -->
 
-<?xml-stylesheet href="chrome://sitestalker/skin/overlay.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://sitestalker/locale/sitestalker.dtd">
-<overlay id="sitestalker-overlay"
+<?xml-stylesheet href="chrome://sitewatch/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://sitewatch/locale/sitewatch.dtd">
+<overlay id="sitewatch-overlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<script type="application/x-javascript" src="chrome://sitestalker/content/jquery-1.6.1.min.js" />
+<script type="application/x-javascript" src="chrome://sitewatch/content/jquery-1.6.1.min.js" />
+<script type="application/x-javascript" src="chrome://sitewatch/content/sha1-min.js" />
 
-<script type="application/x-javascript" src="chrome://sitestalker/content/jquery.highlighter.js" />
+<script type="application/x-javascript" src="chrome://sitewatch/content/jquery.highlighter.js" />
   <script type="application/x-javascript" src="overlay.js"/>
   <stringbundleset id="stringbundleset">
-    <stringbundle id="sitestalker-strings" src="chrome://sitestalker/locale/sitestalker.properties"/>
+    <stringbundle id="sitewatch-strings" src="chrome://sitewatch/locale/sitewatch.properties"/>
   </stringbundleset>
 
   <menupopup id="menu_ToolsPopup">
-    <menuitem id="sitestalker-hello" label="&sitestalker.label;" 
-              oncommand="sitestalker.onMenuItemCommand(event);"/>
+    <menuitem id="sitewatch-hello" label="&sitewatch.label;" 
+              oncommand="sitewatch.onMenuItemCommand(event);"/>
   </menupopup>
-  <toolbarpalette id="BrowserToolbarPalette">
-  <toolbarbutton id="sitestalker-toolbar-button"
-    label="&sitestalkerToolbar.label;"
-    tooltiptext="&sitestalkerToolbar.tooltip;"
-    oncommand="sitestalker.onMenuItemCommand()"
-    class="toolbarbutton-1 chromeclass-toolbar-additional"/>
-  </toolbarpalette>
+  <statusbar id="status-bar">
+    <statusbarpanel class="statusbarpanel-iconic" id="sitewatch_icon" oncommand="sitewatch.onMenuItemCommand(event)" src="chrome://sitewatch/content/eye.png" />
+  </statusbar>
+
 </overlay>

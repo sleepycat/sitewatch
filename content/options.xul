@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<window 
+	title="Sitewatch Options"
+	id="sitewatch-options-window"
+	orient="vertical"
+	style="padding:1em;"
+	onload="sitwatch.optionsLoad()"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	
+  <script type="application/x-javascript" src="chrome://sitewatch/content/overlay.js"></script>
+
+	<vbox>
+		<text value="Sitewatch" style="font-weight: bold; font-size: x-large;"/>
+		<separator class="thin"/>
+
+		<label control="username" value="Username."/>
+		<textbox id="username"/>
+		<label control="password" value="password"/>
+		<textbox id="password"/>
+
+
+		<hbox>
+			<spacer flex="1"/>
+			<button label="Save and Close" oncommand="sitewatch.optionsSave();"/>
+		</hbox>
+	</vbox>
+</window>
